@@ -161,7 +161,12 @@
     function buildDiscordMessage() {
         var lines = [];
 
+        var now = new Date();
+        var date = now.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+        var time = now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
         lines.push("**\uD83E\uDDFE Loggy \u2014 Rapport d'activit\u00E9**");
+        lines.push("\uD83D\uDCC5 " + date + " \u00E0 " + time);
         lines.push("");
         lines.push("\uD83D\uDC64 **Personne :** " + state.person);
         lines.push("");
