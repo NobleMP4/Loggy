@@ -191,7 +191,7 @@
         if (hasCodeWork) {
             lines.push("");
             lines.push("\uD83D\uDD14 **Review :**");
-            lines.push("Hop Hop Hop <@" + CONFIG.reviewer.discordId + "> il faut que tu v\u00E9rifies la pull request");
+            lines.push("Hop Hop Hop <@" + CONFIG.reviewer.discordId + "> il faut que tu check la pull request");
         }
 
         // Channel ping

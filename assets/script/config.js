@@ -3,7 +3,7 @@
  */
 
 const CONFIG = {
-  webhookUrl: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN",
+  webhookUrl: "https://discord.com/api/webhooks/1470372923411005706/vADJNycA1P8_Rems9WrH74HRu1skT4719dR2p1k9wng63NBHBKnRXWqdAyr9J5Q9bSB2",
 
   persons: [
     "Alice",
@@ -22,12 +22,11 @@ const CONFIG = {
   ],
 
   reviewer: {
-    name: "Alice",
-    discordId: "111111111111111111"
+    name: "Esteban",
+    discordId: "427007095976493069"
   },
 
   channelMembers: [
-    "123456789012345678",
-    "987654321098765432"
+    "427007095976493069"
   ]
 };
