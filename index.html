@@ -2,9 +2,49 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loggy — Rapport d'activité</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
+    <main class="container">
+        <h1>Loggy</h1>
+        <p class="subtitle">Déclaration de travaux &amp; rapport Discord</p>
 
+        <form id="loggy-form" autocomplete="off">
+            <!-- Personne -->
+            <section class="form-section">
+                <label for="person-select">Personne</label>
+                <select id="person-select" required>
+                    <option value="">— Choisir —</option>
+                </select>
+            </section>
+
+            <!-- Travaux réalisés -->
+            <section class="form-section">
+                <label>Travaux réalisés</label>
+                <div id="work-checkboxes" class="checkbox-group"></div>
+            </section>
+
+            <!-- Détails par travail -->
+            <div id="work-details"></div>
+
+            <!-- Reviewer -->
+            <section id="reviewer-section" class="form-section hidden">
+                <label for="reviewer-select">Reviewer (Pull Request)</label>
+                <select id="reviewer-select">
+                    <option value="">— Choisir un reviewer —</option>
+                </select>
+            </section>
+
+            <!-- Envoi -->
+            <button type="submit" id="send-btn">Envoyer le rapport</button>
+        </form>
+
+        <div id="status-message" class="hidden"></div>
+    </main>
+
+    <script src="assets/script/config.js"></script>
+    <script src="assets/script/main.js"></script>
 </body>
 </html>
