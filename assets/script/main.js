@@ -9,8 +9,6 @@
     const personSelect = document.getElementById("person-select");
     const workCheckboxes = document.getElementById("work-checkboxes");
     const workDetails = document.getElementById("work-details");
-    const reviewerSection = document.getElementById("reviewer-section");
-    const reviewerSelect = document.getElementById("reviewer-select");
     const form = document.getElementById("loggy-form");
     const sendBtn = document.getElementById("send-btn");
     const statusMessage = document.getElementById("status-message");
@@ -19,8 +17,7 @@
     // { wireframe: ["detail1", "detail2"], code_front: ["detail1"], ... }
     const state = {
         person: "",
-        works: {},
-        reviewer: ""
+        works: {}
     };
 
     // Work types that require a reviewer
@@ -31,7 +28,6 @@
     function init() {
         populatePersons();
         populateWorkCheckboxes();
-        populateReviewers();
         bindEvents();
     }
 
@@ -61,15 +57,6 @@
         });
     }
 
-    function populateReviewers() {
-        CONFIG.reviewers.forEach(function (reviewer) {
-            const option = document.createElement("option");
-            option.value = reviewer.discordId;
-            option.textContent = reviewer.name;
-            reviewerSelect.appendChild(option);
-        });
-    }
-
     // ── Event binding ───────────────────────────────────────────
 
     function bindEvents() {
@@ -80,10 +67,6 @@
         workCheckboxes.addEventListener("change", function (e) {
             if (e.target.type !== "checkbox") return;
             handleWorkToggle(e.target.value, e.target.checked);
-        });
-
-        reviewerSelect.addEventListener("change", function () {
-            state.reviewer = this.value;
         });
 
         form.addEventListener("submit", function (e) {
@@ -102,7 +85,6 @@
             delete state.works[workId];
             removeDetailSection(workId);
         }
-        updateReviewerVisibility();
     }
 
     function renderDetailSection(workId) {
@@ -174,19 +156,6 @@
         if (section) section.remove();
     }
 
-    function updateReviewerVisibility() {
-        var needsReviewer = CODE_WORK_IDS.some(function (id) {
-            return state.works.hasOwnProperty(id);
-        });
-        if (needsReviewer) {
-            reviewerSection.classList.remove("hidden");
-        } else {
-            reviewerSection.classList.add("hidden");
-            reviewerSelect.value = "";
-            state.reviewer = "";
-        }
-    }
-
     // ── Message building ────────────────────────────────────────
 
     function buildDiscordMessage() {
@@ -219,10 +188,10 @@
             return state.works.hasOwnProperty(id);
         });
 
-        if (hasCodeWork && state.reviewer) {
+        if (hasCodeWork) {
             lines.push("");
             lines.push("\uD83D\uDD14 **Review :**");
-            lines.push("Hop Hop Hop <@" + state.reviewer + "> il faut que tu v\u00E9rifies la pull request");
+            lines.push("Hop Hop Hop <@" + CONFIG.reviewer.discordId + "> il faut que tu v\u00E9rifies la pull request");
         }
 
         // Channel ping
@@ -245,11 +214,6 @@
 
         var selectedWorks = Object.keys(state.works);
         if (selectedWorks.length === 0) return "Veuillez s\u00E9lectionner au moins un travail.";
-
-        var hasCodeWork = CODE_WORK_IDS.some(function (id) {
-            return state.works.hasOwnProperty(id);
-        });
-        if (hasCodeWork && !state.reviewer) return "Veuillez s\u00E9lectionner un reviewer.";
 
         return null;
     }
@@ -296,16 +260,13 @@
     function resetForm() {
         state.person = "";
         state.works = {};
-        state.reviewer = "";
 
         personSelect.value = "";
-        reviewerSelect.value = "";
 
         var checkboxes = workCheckboxes.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(function (cb) { cb.checked = false; });
 
         workDetails.innerHTML = "";
-        reviewerSection.classList.add("hidden");
     }
 
     // ── Start ───────────────────────────────────────────────────
