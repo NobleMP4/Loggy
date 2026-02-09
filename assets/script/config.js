@@ -6,11 +6,9 @@ const CONFIG = {
   webhookUrl: "https://discord.com/api/webhooks/1470372923411005706/vADJNycA1P8_Rems9WrH74HRu1skT4719dR2p1k9wng63NBHBKnRXWqdAyr9J5Q9bSB2",
 
   persons: [
-    "Alice",
-    "Bob",
-    "Charlie",
-    "Diana",
-    "Eve"
+    "Wesley",
+    "Loïc",
+    "Esteban"
   ],
 
   workTypes: [
@@ -27,6 +25,8 @@ const CONFIG = {
   },
 
   channelMembers: [
-    "427007095976493069"
+    "427007095976493069",
+      "1137143489419821161",
+      "191197245738188800"
   ]
 };
