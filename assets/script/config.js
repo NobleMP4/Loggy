@@ -21,11 +21,10 @@ const CONFIG = {
     { id: "code_back", label: "Code Back" }
   ],
 
-  reviewers: [
-    { name: "Alice", discordId: "111111111111111111" },
-    { name: "Bob", discordId: "222222222222222222" },
-    { name: "Charlie", discordId: "333333333333333333" }
-  ],
+  reviewer: {
+    name: "Alice",
+    discordId: "111111111111111111"
+  },
 
   channelMembers: [
     "123456789012345678",
