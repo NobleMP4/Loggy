@@ -14,6 +14,8 @@ const CONFIG = {
   workTypes: [
     { id: "wireframe", label: "Wireframe" },
     { id: "user_story", label: "User Story" },
+      { id: "mcd", label: "MCD" },
+      { id: "mld", label: "MLD" },
     { id: "maquette", label: "Maquette" },
     { id: "code_front", label: "Code Front" },
     { id: "code_back", label: "Code Back" }
