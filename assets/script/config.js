@@ -39,18 +39,10 @@ const CONFIG = {
       items: [
         { id: "tests", label: "Tests" },
         { id: "debug", label: "Debug / Correction" },
-        { id: "code_review", label: "Code Review" },
         { id: "documentation", label: "Documentation" },
         { id: "deploiement", label: "Déploiement" }
       ]
     },
-    {
-      name: "Gestion",
-      items: [
-        { id: "reunion", label: "Réunion" },
-        { id: "veille", label: "Veille technologique" }
-      ]
-    }
   ],
 
   reviewer: {

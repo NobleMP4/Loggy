@@ -251,7 +251,7 @@
 
         var lines = [];
 
-        lines.push("\uD83E\uDDFE Loggy \u2014 Rapport d'activit\u00E9");
+        lines.push("\uD83E\uDDFE Rapport d'activit\u00E9");
         lines.push("\uD83D\uDCC5 (date et heure de l'envoi)");
         lines.push("");
 
@@ -291,7 +291,6 @@
 
         if (CONFIG.channelMembers.length > 0) {
             lines.push("");
-            lines.push("\uD83D\uDC65 Channel :");
             lines.push(CONFIG.channelMembers.map(function () { return "@membre"; }).join(" "));
         }
 
