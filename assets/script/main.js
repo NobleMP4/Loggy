@@ -230,7 +230,6 @@
         // Channel ping
         if (CONFIG.channelMembers.length > 0) {
             lines.push("");
-            lines.push("\uD83D\uDC65 **Channel :**");
             var mentions = CONFIG.channelMembers.map(function (id) {
                 return "<@" + id + ">";
             }).join(" ");
