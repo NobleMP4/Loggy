@@ -12,13 +12,29 @@ const CONFIG = {
   ],
 
   workTypes: [
+    // Conception / Analyse
     { id: "wireframe", label: "Wireframe" },
     { id: "user_story", label: "User Story" },
-      { id: "mcd", label: "MCD" },
-      { id: "mld", label: "MLD" },
+    { id: "cahier_des_charges", label: "Cahier des charges" },
+    { id: "mcd", label: "MCD" },
+    { id: "mld", label: "MLD" },
+    { id: "diagramme_uml", label: "Diagramme UML" },
     { id: "maquette", label: "Maquette" },
+    // Développement
     { id: "code_front", label: "Code Front" },
-    { id: "code_back", label: "Code Back" }
+    { id: "code_back", label: "Code Back" },
+    { id: "code_bdd", label: "Base de données" },
+    { id: "api", label: "API / Endpoints" },
+    { id: "integration", label: "Intégration" },
+    // Qualité / Livraison
+    { id: "tests", label: "Tests" },
+    { id: "debug", label: "Debug / Correction" },
+    { id: "code_review", label: "Code Review" },
+    { id: "documentation", label: "Documentation" },
+    { id: "deploiement", label: "Déploiement" },
+    // Gestion
+    { id: "reunion", label: "Réunion" },
+    { id: "veille", label: "Veille technologique" }
   ],
 
   reviewer: {
