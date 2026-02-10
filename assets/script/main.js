@@ -7,14 +7,14 @@
 
     // ── DOM references ──────────────────────────────────────────
     const personSelect = document.getElementById("person-select");
-    const workCheckboxes = document.getElementById("work-checkboxes");
+    const workCategories = document.getElementById("work-categories");
     const workDetails = document.getElementById("work-details");
+    const messagePreview = document.getElementById("message-preview");
     const form = document.getElementById("loggy-form");
     const sendBtn = document.getElementById("send-btn");
     const statusMessage = document.getElementById("status-message");
 
     // ── Application state ───────────────────────────────────────
-    // { wireframe: ["detail1", "detail2"], code_front: ["detail1"], ... }
     const state = {
         person: "",
         works: {}
@@ -23,37 +23,61 @@
     // Work types that require a reviewer
     const CODE_WORK_IDS = ["code_front", "code_back"];
 
+    // Flat lookup: id -> label
+    var workLabelMap = {};
+    CONFIG.workCategories.forEach(function (cat) {
+        cat.items.forEach(function (item) {
+            workLabelMap[item.id] = item.label;
+        });
+    });
+
     // ── Initialization ──────────────────────────────────────────
 
     function init() {
         populatePersons();
-        populateWorkCheckboxes();
+        populateWorkCategories();
         bindEvents();
+        updatePreview();
     }
 
     function populatePersons() {
         CONFIG.persons.forEach(function (name) {
-            const option = document.createElement("option");
+            var option = document.createElement("option");
             option.value = name;
             option.textContent = name;
             personSelect.appendChild(option);
         });
     }
 
-    function populateWorkCheckboxes() {
-        CONFIG.workTypes.forEach(function (work) {
-            const label = document.createElement("label");
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.value = work.id;
-            checkbox.name = "works";
+    function populateWorkCategories() {
+        CONFIG.workCategories.forEach(function (category) {
+            var group = document.createElement("div");
+            group.className = "category-group";
 
-            const span = document.createElement("span");
-            span.textContent = work.label;
+            var title = document.createElement("h3");
+            title.textContent = category.name;
+            group.appendChild(title);
 
-            label.appendChild(checkbox);
-            label.appendChild(span);
-            workCheckboxes.appendChild(label);
+            var checkboxGroup = document.createElement("div");
+            checkboxGroup.className = "checkbox-group";
+
+            category.items.forEach(function (work) {
+                var label = document.createElement("label");
+                var checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = work.id;
+                checkbox.name = "works";
+
+                var span = document.createElement("span");
+                span.textContent = work.label;
+
+                label.appendChild(checkbox);
+                label.appendChild(span);
+                checkboxGroup.appendChild(label);
+            });
+
+            group.appendChild(checkboxGroup);
+            workCategories.appendChild(group);
         });
     }
 
@@ -62,9 +86,10 @@
     function bindEvents() {
         personSelect.addEventListener("change", function () {
             state.person = this.value;
+            updatePreview();
         });
 
-        workCheckboxes.addEventListener("change", function (e) {
+        workCategories.addEventListener("change", function (e) {
             if (e.target.type !== "checkbox") return;
             handleWorkToggle(e.target.value, e.target.checked);
         });
@@ -85,27 +110,28 @@
             delete state.works[workId];
             removeDetailSection(workId);
         }
+        updatePreview();
     }
 
     function renderDetailSection(workId) {
-        const workType = CONFIG.workTypes.find(function (w) { return w.id === workId; });
-        if (!workType) return;
+        var label = workLabelMap[workId];
+        if (!label) return;
 
-        const section = document.createElement("section");
+        var section = document.createElement("section");
         section.className = "work-detail-section";
         section.dataset.workId = workId;
 
-        const title = document.createElement("h3");
-        title.textContent = workType.label;
+        var title = document.createElement("h3");
+        title.textContent = label;
         section.appendChild(title);
 
-        const entriesContainer = document.createElement("div");
+        var entriesContainer = document.createElement("div");
         entriesContainer.className = "entries-container";
         section.appendChild(entriesContainer);
 
         renderDetailEntries(workId, entriesContainer);
 
-        const addBtn = document.createElement("button");
+        var addBtn = document.createElement("button");
         addBtn.type = "button";
         addBtn.className = "btn-add";
         addBtn.textContent = "+ Ajouter un détail";
@@ -122,18 +148,19 @@
         container.innerHTML = "";
 
         state.works[workId].forEach(function (value, index) {
-            const entry = document.createElement("div");
+            var entry = document.createElement("div");
             entry.className = "detail-entry";
 
-            const input = document.createElement("input");
+            var input = document.createElement("input");
             input.type = "text";
             input.placeholder = "Détail du travail...";
             input.value = value;
             input.addEventListener("input", function () {
                 state.works[workId][index] = this.value;
+                updatePreview();
             });
 
-            const removeBtn = document.createElement("button");
+            var removeBtn = document.createElement("button");
             removeBtn.type = "button";
             removeBtn.className = "btn-remove";
             removeBtn.textContent = "X";
@@ -143,6 +170,7 @@
                     state.works[workId].push("");
                 }
                 renderDetailEntries(workId, container);
+                updatePreview();
             });
 
             entry.appendChild(input);
@@ -174,11 +202,11 @@
 
         var selectedWorkIds = Object.keys(state.works);
         selectedWorkIds.forEach(function (workId) {
-            var workType = CONFIG.workTypes.find(function (w) { return w.id === workId; });
-            if (!workType) return;
+            var label = workLabelMap[workId];
+            if (!label) return;
 
             lines.push("");
-            lines.push("\u25B6 **" + workType.label + "**");
+            lines.push("\u25B6 **" + label + "**");
 
             var details = state.works[workId].filter(function (d) { return d.trim() !== ""; });
             if (details.length > 0) {
@@ -210,6 +238,73 @@
         }
 
         return lines.join("\n");
+    }
+
+    // ── Live preview ────────────────────────────────────────────
+
+    function buildPreviewText() {
+        var selectedWorkIds = Object.keys(state.works);
+
+        if (!state.person && selectedWorkIds.length === 0) {
+            return "";
+        }
+
+        var lines = [];
+
+        lines.push("\uD83E\uDDFE Loggy \u2014 Rapport d'activit\u00E9");
+        lines.push("\uD83D\uDCC5 (date et heure de l'envoi)");
+        lines.push("");
+
+        if (state.person) {
+            lines.push("\uD83D\uDC64 Personne : " + state.person);
+        } else {
+            lines.push("\uD83D\uDC64 Personne : ...");
+        }
+
+        if (selectedWorkIds.length > 0) {
+            lines.push("");
+            lines.push("\uD83D\uDD27 Travaux :");
+
+            selectedWorkIds.forEach(function (workId) {
+                var label = workLabelMap[workId];
+                if (!label) return;
+
+                lines.push("");
+                lines.push("\u25B6 " + label);
+
+                var details = state.works[workId].filter(function (d) { return d.trim() !== ""; });
+                details.forEach(function (detail) {
+                    lines.push("  - " + detail);
+                });
+            });
+        }
+
+        var hasCodeWork = CODE_WORK_IDS.some(function (id) {
+            return state.works.hasOwnProperty(id);
+        });
+
+        if (hasCodeWork) {
+            lines.push("");
+            lines.push("\uD83D\uDD14 Review :");
+            lines.push("Hop Hop Hop @" + CONFIG.reviewer.name + " il faut que tu check la pull request");
+        }
+
+        if (CONFIG.channelMembers.length > 0) {
+            lines.push("");
+            lines.push("\uD83D\uDC65 Channel :");
+            lines.push(CONFIG.channelMembers.map(function () { return "@membre"; }).join(" "));
+        }
+
+        return lines.join("\n");
+    }
+
+    function updatePreview() {
+        var text = buildPreviewText();
+        if (!text) {
+            messagePreview.innerHTML = '<p class="preview-empty">S\u00E9lectionnez une personne et des travaux pour voir l\u2019aper\u00E7u du message.</p>';
+        } else {
+            messagePreview.textContent = text;
+        }
     }
 
     // ── Submission ──────────────────────────────────────────────
@@ -268,10 +363,11 @@
 
         personSelect.value = "";
 
-        var checkboxes = workCheckboxes.querySelectorAll('input[type="checkbox"]');
+        var checkboxes = workCategories.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(function (cb) { cb.checked = false; });
 
         workDetails.innerHTML = "";
+        updatePreview();
     }
 
     // ── Start ───────────────────────────────────────────────────
