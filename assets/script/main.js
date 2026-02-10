@@ -21,7 +21,7 @@
     };
 
     // Work types that require a reviewer
-    const CODE_WORK_IDS = ["code_front", "code_back", "code_bdd", "api", "integration"];
+    const CODE_WORK_IDS = ["code_front", "code_back"];
 
     // ── Initialization ──────────────────────────────────────────
 
